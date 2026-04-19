@@ -1,0 +1,3 @@
+First command : $env:TF_USE_LEGACY_KERAS="1" ; .\tf_env\Scripts\python.exe train_comparison.py
+Second command : python -m http.server 8000 --directory dashboard
+Open : http://localhost:8000

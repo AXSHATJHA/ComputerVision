@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Comparison Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="brand">
+                <div class="logo-icon"></div>
+                <h2>NeuroMetrics</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#" data-target="tab-dashboard">Dashboard</a></li>
+                <li><a href="#" data-target="tab-models">Model Details</a></li>
+                <li><a href="#" data-target="tab-dataset">Dataset</a></li>
+                <li><a href="#" data-target="tab-settings">Settings</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div id="tab-dashboard" class="tab-pane active">
+                <header>
+                <div>
+                    <h1 class="page-title">Model Comparison</h1>
+                    <p class="subtitle">Evaluating Architectures on Wildlife Classification</p>
+                </div>
+                <div class="status-badge">
+                    <span class="dot pulse"></span>
+                    <span id="training-status">Fetching Data...</span>
+                </div>
+            </header>
+
+            <!-- Hero Metrics Grid -->
+            <section class="metrics-grid">
+                <div class="metric-card glass">
+                    <h3>Top Overall Accuracy</h3>
+                    <div class="metric-value-group">
+                        <span class="value" id="top-acc-value">--%</span>
+                        <span class="trend positive">🏆 <span id="top-acc-model">-</span></span>
+                    </div>
+                </div>
+                <div class="metric-card glass">
+                    <h3>Top F1-Score (Macro)</h3>
+                    <div class="metric-value-group">
+                        <span class="value" id="top-f1-value">--%</span>
+                        <span class="trend positive">🏆 <span id="top-f1-model">-</span></span>
+                    </div>
+                </div>
+                <div class="metric-card glass">
+                    <h3>Lowest Validation Loss</h3>
+                    <div class="metric-value-group">
+                        <span class="value" id="bottom-loss-value">--</span>
+                        <span class="trend positive">🏆 <span id="bottom-loss-model">-</span></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Area -->
+            <section class="charts-area">
+                <div class="chart-container large glass">
+                    <div class="chart-header">
+                        <h2>Validation Accuracy History</h2>
+                        <div class="legend-filter">Epoch Progression</div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="accuracyHistoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container large glass">
+                    <div class="chart-header">
+                        <h2>Validation Loss History</h2>
+                        <div class="legend-filter">Epoch Progression</div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="lossHistoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Secondary Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-container small glass">
+                        <div class="chart-header">
+                            <h2>Test Accuracy Comparison</h2>
+                        </div>
+                        <div class="canvas-wrapper">
+                            <canvas id="barAccuracyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container small glass">
+                        <div class="chart-header">
+                            <h2>F1 Score Comparison</h2>
+                        </div>
+                        <div class="canvas-wrapper">
+                            <canvas id="barF1Chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            </div>
+
+            <!-- Model Details Tab -->
+            <div id="tab-models" class="tab-pane">
+                <header>
+                    <div>
+                        <h1 class="page-title">Model Details</h1>
+                        <p class="subtitle">Architecture Insights and Hyperparameters</p>
+                    </div>
+                </header>
+                <div class="glass" style="padding: 2rem; margin-top: 1rem; border-radius: 12px; overflow-x: auto;">
+                    <h3>Architecture Summary</h3>
+                    <table style="width: 100%; margin-top: 1.5rem; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--glass-border); color: var(--accent-primary);">
+                                <th style="padding: 1rem;">Model Backbone</th>
+                                <th style="padding: 1rem;">Base Parameters</th>
+                                <th style="padding: 1rem;">Custom Top Layer</th>
+                                <th style="padding: 1rem;">Optimizer</th>
+                                <th style="padding: 1rem;">Image Input Size</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--glass-border);">
+                                <td style="padding: 1rem; font-weight: 600;">EfficientNetB3</td>
+                                <td style="padding: 1rem; color: var(--text-muted);">~12.2 M</td>
+                                <td style="padding: 1rem;">Dense(256) -> Dropout(0.45) -> Dense(90)</td>
+                                <td style="padding: 1rem;">Adam (0.0005)</td>
+                                <td style="padding: 1rem;">224 x 224 x 3</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--glass-border);">
+                                <td style="padding: 1rem; font-weight: 600;">MobileNetV2</td>
+                                <td style="padding: 1rem; color: var(--text-muted);">~3.5 M</td>
+                                <td style="padding: 1rem;">Dense(256) -> Dropout(0.45) -> Dense(90)</td>
+                                <td style="padding: 1rem;">Adam (0.0005)</td>
+                                <td style="padding: 1rem;">224 x 224 x 3</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 1rem; font-weight: 600;">ResNet50</td>
+                                <td style="padding: 1rem; color: var(--text-muted);">~25.6 M</td>
+                                <td style="padding: 1rem;">Dense(256) -> Dropout(0.45) -> Dense(90)</td>
+                                <td style="padding: 1rem;">Adam (0.0005)</td>
+                                <td style="padding: 1rem;">224 x 224 x 3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Dataset Tab -->
+            <div id="tab-dataset" class="tab-pane">
+                <header>
+                    <div>
+                        <h1 class="page-title">Dataset Overview</h1>
+                        <p class="subtitle">90-Class Animal Classification</p>
+                    </div>
+                </header>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                    <div class="glass" style="padding: 2rem; border-radius: 12px;">
+                        <h3>Dataset Properties</h3>
+                        <ul style="color: var(--text-muted); margin-top: 1rem; padding-left: 1.5rem; line-height: 2;">
+                            <li><strong style="color: var(--text-main);">Total Image Classes:</strong> 90 distinct animal species</li>
+                            <li><strong style="color: var(--text-main);">Image Data Format:</strong> RGB color format</li>
+                            <li><strong style="color: var(--text-main);">Data Split Strategy:</strong> 70% Training / 21% Validation / 9% Testing</li>
+                        </ul>
+                    </div>
+                    <div class="glass" style="padding: 2rem; border-radius: 12px;">
+                        <h3>Data Augmentation Pipeline</h3>
+                        <ul style="color: var(--text-muted); margin-top: 1rem; padding-left: 1.5rem; line-height: 2;">
+                            <li><strong style="color: var(--text-main);">Horizontal Flip:</strong> Applied Randomly</li>
+                            <li><strong style="color: var(--text-main);">Random Rotation:</strong> ±15% (0.15 factor)</li>
+                            <li><strong style="color: var(--text-main);">Random Zoom:</strong> ±15% (0.15 factor)</li>
+                            <li><strong style="color: var(--text-main);">Random Contrast:</strong> ±15% adjustment</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="tab-settings" class="tab-pane">
+                <header>
+                    <div>
+                        <h1 class="page-title">Settings</h1>
+                        <p class="subtitle">Dashboard Preferences</p>
+                    </div>
+                </header>
+                <div class="glass" style="padding: 2rem; border-radius: 12px; margin-top: 1rem;">
+                    <h3>General Settings</h3>
+                    <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                        <input type="checkbox" id="auto-refresh" checked disabled style="width: 1.2rem; height: 1.2rem; accent-color: var(--accent-primary);">
+                        <label for="auto-refresh" style="color: var(--text-muted);">Auto-fetch metrics.json continuously (Active)</label>
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+                        <input type="checkbox" id="dark-mode" checked disabled style="width: 1.2rem; height: 1.2rem; accent-color: var(--accent-primary);">
+                        <label for="dark-mode" style="color: var(--text-muted);">Force Dark Mode Theme (Active)</label>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
